@@ -521,10 +521,47 @@ function filterCat(cat, btn) {
           referrerpolicy="no-referrer-when-downgrade">
         </iframe>
       </div>
-      <div class="hours-grid">
-        <div class="hours-row"><span class="hours-day">Lundi</span><span class="closed">Fermé</span></div>
-        <div class="hours-row"><span class="hours-day">Mardi — Dimanche</span><span class="hours-time">18h – 22h <span style="font-size:.8em;opacity:.7;font-weight:400;">(fermeture possible à 21h selon affluence)</span></span></div>
+      <div style="margin-top:1.8rem;">
+        <div style="display:flex;align-items:center;gap:.8rem;margin-bottom:1.2rem;">
+          <span id="open-badge" style="display:inline-flex;align-items:center;gap:.4rem;padding:.35rem 1rem;border-radius:50px;font-size:.82rem;font-weight:700;letter-spacing:.5px;"></span>
+          <span id="open-next" style="font-size:.82rem;opacity:.6;"></span>
+        </div>
+        <div class="hours-grid">
+          <div class="hours-row"><span class="hours-day">Lundi</span><span class="closed">Fermé</span></div>
+          <div class="hours-row"><span class="hours-day">Mardi</span><span class="hours-time">18h – 22h</span></div>
+          <div class="hours-row"><span class="hours-day">Mercredi</span><span class="hours-time">18h – 22h</span></div>
+          <div class="hours-row"><span class="hours-day">Jeudi</span><span class="hours-time">18h – 22h</span></div>
+          <div class="hours-row"><span class="hours-day">Vendredi</span><span class="hours-time">18h – 22h</span></div>
+          <div class="hours-row"><span class="hours-day">Samedi</span><span class="hours-time">18h – 22h</span></div>
+          <div class="hours-row" style="border-bottom:none;"><span class="hours-day">Dimanche</span><span class="hours-time">18h – 22h</span></div>
+        </div>
+        <p style="font-size:.78rem;opacity:.5;margin-top:.8rem;font-style:italic;">Fermeture possible à 21h selon affluence</p>
       </div>
+      <script>
+      (function(){
+        var now = new Date();
+        var day = now.getDay(); // 0=dim, 1=lun...
+        var hour = now.getHours();
+        var min = now.getMinutes();
+        var time = hour + min/60;
+        var isOpen = day !== 1 && time >= 18 && time < 22;
+        var badge = document.getElementById('open-badge');
+        var next = document.getElementById('open-next');
+        if(isOpen){
+          badge.style.background='rgba(39,174,96,.25)';
+          badge.style.color='#27ae60';
+          badge.innerHTML='<span style="width:8px;height:8px;border-radius:50%;background:#27ae60;display:inline-block;box-shadow:0 0 0 3px rgba(39,174,96,.3);"></span> Ouvert maintenant';
+          next.textContent='Ferme à 22h';
+        } else {
+          badge.style.background='rgba(232,52,26,.2)';
+          badge.style.color='#ff6b6b';
+          badge.innerHTML='<span style="width:8px;height:8px;border-radius:50%;background:#ff6b6b;display:inline-block;"></span> Fermé';
+          if(day === 1){ next.textContent='Rouvre mardi à 18h'; }
+          else if(time < 18){ next.textContent='Ouvre aujourd'hui à 18h'; }
+          else { next.textContent='Rouvre demain à 18h'; }
+        }
+      })();
+      </script>
     </div>
     <div>
       <div class="form-title">Nous contacter</div>
@@ -756,5 +793,27 @@ function exportSite(){
   03 82 50 66 89
 </a>
 
+
+<div id="review-popup" style="display:none;position:fixed;bottom:2rem;left:2rem;z-index:99998;max-width:300px;background:#fff;border-radius:18px;box-shadow:0 12px 40px rgba(0,0,0,.18);padding:1.4rem 1.5rem;border-top:4px solid #F5A623;animation:slideInLeft .4s ease;">
+  <button onclick="closeReviewPopup()" style="position:absolute;top:.6rem;right:.8rem;background:none;border:none;font-size:1.2rem;cursor:pointer;color:#bbb;line-height:1;">✕</button>
+  <div style="font-size:1.5rem;margin-bottom:.4rem;">⭐</div>
+  <div style="font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;color:#1C1208;margin-bottom:.4rem;">Vous avez aimé ?</div>
+  <div style="font-size:.85rem;color:#888;margin-bottom:1rem;line-height:1.5;">Laissez-nous un avis Google, ça nous aide énormément ! 🙏</div>
+  <a href="https://g.page/r/CQPjbTSam70FEBo/review" target="_blank" onclick="closeReviewPopup()" style="display:block;background:#F5A623;color:#1C1208;text-align:center;padding:.7rem 1rem;border-radius:50px;font-weight:700;font-size:.9rem;text-decoration:none;transition:all .2s;">⭐ Laisser un avis</a>
+</div>
+<style>
+@keyframes slideInLeft{from{transform:translateX(-120%);opacity:0;}to{transform:translateX(0);opacity:1;}}
+</style>
+<script>
+function closeReviewPopup(){
+  document.getElementById('review-popup').style.display='none';
+  localStorage.setItem('reviewPopupShown','1');
+}
+setTimeout(function(){
+  if(!localStorage.getItem('reviewPopupShown')){
+    document.getElementById('review-popup').style.display='block';
+  }
+}, 25000);
+</script>
 </body>
 </html>
